@@ -22,6 +22,8 @@ module.exports = (sequelize, DataTypes) => {
             updatedAt: "updated_at",
         }
     );
-    User.associate = (db) => {};
+    User.associate = (db) => {
+        User.hasMany(db.RefreshToken);
+    };
     return User;
 };
