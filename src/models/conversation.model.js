@@ -1,6 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
-  const User = sequelize.define(
-    "User",
+  const Conversation = sequelize.define(
+    "Conversation",
     {
       id: {
         autoIncrement: true,
@@ -105,8 +105,8 @@ module.exports = (sequelize, DataTypes) => {
       updatedAt: "updated_at",
     }
   );
-  User.associate = (db) => {
-    User.hasMany(db.RefreshToken);
+  Conversation.associate = (db) => {
+    Conversation.hasMany(db.RefreshToken);
   };
-  return User;
+  return Conversation;
 };
