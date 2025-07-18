@@ -3,11 +3,11 @@ module.exports = (sequelize, DataTypes) => {
     "User",
     {
       id: {
-        autoIncrement: true,
-        primaryKey: true,
         type: DataTypes.INTEGER({
           unsigned: true,
         }),
+        primaryKey: true,
+        autoIncrement: true,
       },
       email: {
         type: DataTypes.STRING(100),
@@ -19,19 +19,19 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING(255),
         allowNull: false,
       },
-      two_factor_enabled: {
+      twoFactorEnabled: {
         type: DataTypes.TINYINT(1),
         defaultValue: 0,
       },
-      two_factor_secret: {
+      twoFactorSecret: {
         type: DataTypes.STRING(50),
         defaultValue: null,
       },
-      first_name: {
+      firstName: {
         type: DataTypes.STRING(50),
         allowNull: true,
       },
-      last_name: {
+      lastName: {
         type: DataTypes.STRING(50),
         allowNull: true,
       },
@@ -53,7 +53,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING(100),
         defaultValue: null,
       },
-      posts_count: {
+      postsCount: {
         type: DataTypes.STRING(100),
         defaultValue: null,
       },
@@ -61,52 +61,35 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.TEXT,
         defaultValue: null,
       },
-      website_url: {
+      websiteUrl: {
         type: DataTypes.STRING(255),
         defaultValue: null,
       },
-      x_url: {
+      xUrl: {
         type: DataTypes.STRING(255),
         defaultValue: null,
       },
-      github_url: {
+      githubUrl: {
         type: DataTypes.STRING(255),
         defaultValue: null,
       },
-      linkedin_url: {
+      linkedinUrl: {
         type: DataTypes.STRING(255),
         defaultValue: null,
       },
-      verified_at: {
+      verifiedAt: {
         type: DataTypes.DATE,
         defaultValue: null,
-      },
-      deleted_at: {
-        type: DataTypes.DATE,
-        defaultValue: null,
-      },
-      created_at: {
-        allowNull: false,
-        type: DataTypes.DATE,
-      },
-      updated_at: {
-        allowNull: false,
-        type: DataTypes.DATE,
       },
     },
     {
-      tableName: "users",
-      timestamps: true,
-      underscored: true,
-      charset: "utf8",
-      collate: "utf8_general_ci",
-      engine: "InnoDB",
+      underscored: true, // Converts camelCase → snake_case, but doesn't apply to timestamps by default
+      timestamps: true, // Enables createdAt & updatedAt auto fields
       createdAt: "created_at",
-      updatedAt: "updated_at",
+      updatedAt: "updated_at", // Must define manually because timestamps ignore 'underscored'
+      paranoid: true, // Enables soft delete (logical delete instead of physical)
+      deletedAt: "deleted_at", // Must define manually because timestamps ignore 'underscored'
     }
   );
-  User.associate = (db) => {
-    User.hasMany(db.RefreshToken);
-  };
   return User;
 };

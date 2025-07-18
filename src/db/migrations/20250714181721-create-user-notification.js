@@ -1,12 +1,13 @@
 "use strict";
 
+/** @type {import('sequelize-cli').Migration} */
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable("user_notification", {
       id: {
-        autoIncrement: true,
-        primaryKey: true,
         type: Sequelize.INTEGER({ unsigned: true }),
+        primaryKey: true,
+        autoIncrement: true,
       },
       user_id: {
         type: Sequelize.INTEGER({ unsigned: true }),
@@ -15,8 +16,6 @@ module.exports = {
           model: "users",
           key: "id",
         },
-        onUpdate: "CASCADE",
-        onDelete: "CASCADE",
       },
       notification_id: {
         type: Sequelize.INTEGER({ unsigned: true }),
@@ -25,20 +24,18 @@ module.exports = {
           model: "notifications",
           key: "id",
         },
-        onUpdate: "CASCADE",
-        onDelete: "CASCADE",
       },
       read_at: {
         type: Sequelize.DATE,
         allowNull: true,
       },
       created_at: {
-        allowNull: false,
         type: Sequelize.DATE,
+        allowNull: false,
       },
       updated_at: {
-        allowNull: false,
         type: Sequelize.DATE,
+        allowNull: false,
       },
     });
   },

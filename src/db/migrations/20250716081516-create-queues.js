@@ -11,7 +11,7 @@ module.exports = {
         primaryKey: true,
         autoIncrement: true,
       },
-      job: {
+      type: {
         type: Sequelize.STRING(100),
         allowNull: false,
       },
@@ -21,7 +21,15 @@ module.exports = {
       },
       status: {
         type: Sequelize.STRING(50),
-        defaultValue: "pending",
+        allowNull: false,
+      },
+      retries: {
+        type: Sequelize.INTEGER,
+        defaultValue: 0,
+      },
+      error_message: {
+        type: Sequelize.TEXT,
+        allowNull: true,
       },
       created_at: {
         type: Sequelize.DATE,

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Xác thực địa chỉ email</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        background-color: #f8f9fa;
+        padding: 20px;
+        color: #212529;
+      }
+
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+        background-color: #ffffff;
+        border-radius: 8px;
+        padding: 30px;
+        box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
+      }
+
+      .btn {
+        display: inline-block;
+        background-color: #0d6efd;
+        color: #fff;
+        padding: 12px 24px;
+        border-radius: 5px;
+        text-decoration: none;
+        margin-top: 20px;
+      }
+
+      .footer {
+        margin-top: 40px;
+        font-size: 12px;
+        color: #6c757d;
+      }
+
+      a {
+        word-break: break-all;
+        color: #fff;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>Xin chào <%= firstName %>,</h2>
+      <p>Bạn đã đăng ký tài khoản trên hệ thống của chúng tôi.</p>
+      <p>
+        Vui lòng xác thực địa chỉ email của bạn bằng cách nhấn vào nút bên dưới:
+      </p>
+
+      <a href="<%= verifyUrl %>" class="btn">Xác thực email</a>
+
+      <p>
+        Nếu nút không hoạt động, bạn có thể sao chép và dán đường dẫn sau vào
+        trình duyệt:
+      </p>
+      <p><a href="<%= verifyUrl %>"><%= verifyUrl %></a></p>
+
+      <p>
+        <strong>Lưu ý:</strong> liên kết sẽ hết hạn sau <%= Math.floor(expiresIn
+        / 60) %> phút.
+      </p>
+
+      <div class="footer">
+        Nếu bạn không thực hiện hành động này, vui lòng bỏ qua email này.
+      </div>
+    </div>
+  </body>
+</html>

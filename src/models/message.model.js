@@ -1,6 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
-  const Comment = sequelize.define(
-    "Comment",
+  const Message = sequelize.define(
+    "Message",
     {
       id: {
         type: DataTypes.INTEGER({ unsigned: true }),
@@ -15,25 +15,21 @@ module.exports = (sequelize, DataTypes) => {
           key: "id",
         },
       },
-      postId: {
+      conversationId: {
         type: DataTypes.INTEGER({ unsigned: true }),
         allowNull: false,
         references: {
-          model: "posts",
+          model: "conversations",
           key: "id",
         },
       },
-      parentId: {
-        type: DataTypes.INTEGER({ unsigned: true }),
-        allowNull: true,
-        references: {
-          model: "comments",
-          key: "id",
-        },
+      type: {
+        type: DataTypes.STRING(50),
+        defaultValue: "text",
       },
       content: {
         type: DataTypes.TEXT,
-        allowNull: false,
+        allowNull: true,
       },
     },
     {
@@ -45,5 +41,5 @@ module.exports = (sequelize, DataTypes) => {
       deletedAt: "deleted_at",
     }
   );
-  return Comment;
+  return Message;
 };

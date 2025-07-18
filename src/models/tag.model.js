@@ -1,6 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
-  const Topic = sequelize.define(
-    "Topic",
+  const Tag = sequelize.define(
+    "Tag",
     {
       id: {
         type: DataTypes.INTEGER({ unsigned: true }),
@@ -8,31 +8,15 @@ module.exports = (sequelize, DataTypes) => {
         autoIncrement: true,
       },
       name: {
-        type: DataTypes.STRING(100),
-        allowNull: false,
-      },
-      slug: {
-        type: DataTypes.STRING(255),
+        type: DataTypes.STRING(50),
         allowNull: false,
         unique: true,
       },
-      image: {
-        type: DataTypes.STRING(255),
-        allowNull: true,
-      },
-      description: {
-        type: DataTypes.TEXT,
-        allowNull: true,
-      },
-      postsCount: {
-        type: DataTypes.INTEGER({ unsigned: true }),
-        defaultValue: 0,
-      },
-      createdAt: {
+      created_at: {
         type: DataTypes.DATE,
         allowNull: false,
       },
-      updatedAt: {
+      updated_at: {
         type: DataTypes.DATE,
         allowNull: false,
       },
@@ -46,5 +30,5 @@ module.exports = (sequelize, DataTypes) => {
       deletedAt: "deleted_at",
     }
   );
-  return Topic;
+  return Tag;
 };

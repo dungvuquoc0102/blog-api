@@ -2,47 +2,77 @@ module.exports = (sequelize, DataTypes) => {
   const Post = sequelize.define(
     "Post",
     {
-      title: {
-        type: DataTypes.STRING,
+      id: {
+        type: DataTypes.INTEGER({ unsigned: true }),
+        primaryKey: true,
+        autoIncrement: true,
+      },
+      userId: {
+        type: DataTypes.INTEGER({ unsigned: true }),
         allowNull: false,
+        references: {
+          model: "users",
+          key: "id",
+        },
+      },
+      title: {
+        type: DataTypes.STRING(255),
+        allowNull: false,
+      },
+      description: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+      },
+      metaTitle: {
+        type: DataTypes.STRING(255),
+        allowNull: true,
+      },
+      metaDescription: {
+        type: DataTypes.STRING(255),
+        allowNull: true,
+      },
+      slug: {
+        type: DataTypes.STRING(255),
+        allowNull: false,
+        unique: true,
+      },
+      thumbnail: {
+        type: DataTypes.STRING(255),
+        allowNull: true,
+      },
+      cover: {
+        type: DataTypes.STRING(255),
+        allowNull: true,
       },
       content: {
         type: DataTypes.TEXT,
         allowNull: false,
       },
-      slug: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        unique: true,
-      },
       status: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        defaultValue: "active",
+        type: DataTypes.STRING(50),
+        defaultValue: "draft",
       },
-      topic_id: {
-        type: DataTypes.BIGINT,
-        allowNull: false,
-        references: {
-          model: "topics",
-          key: "id",
-        },
+      viewsCount: {
+        type: DataTypes.INTEGER({ unsigned: true }),
+        defaultValue: 0,
+      },
+      likesCount: {
+        type: DataTypes.INTEGER({ unsigned: true }),
+        defaultValue: 0,
+      },
+      publishedAt: {
+        type: DataTypes.DATE,
+        allowNull: true,
       },
     },
     {
-      tableName: "posts",
-      timestamps: true,
       underscored: true,
-      charset: "utf8",
-      collate: "utf8_general_ci",
-      engine: "InnoDB",
+      timestamps: true,
       createdAt: "created_at",
       updatedAt: "updated_at",
+      paranoid: true,
+      deletedAt: "deleted_at",
     }
   );
-  Post.associate = (db) => {
-    Post.hasMany(db.Comment);
-    Post.belongsTo(db.Topic);
-  };
   return Post;
 };

@@ -1,5 +1,6 @@
 "use strict";
 
+/** @type {import('sequelize-cli').Migration} */
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable("conversation_user", {
@@ -19,8 +20,6 @@ module.exports = {
           model: "users",
           key: "id",
         },
-        onUpdate: "CASCADE",
-        onDelete: "CASCADE",
       },
       conversation_id: {
         type: Sequelize.INTEGER({ unsigned: true }),
@@ -29,8 +28,6 @@ module.exports = {
           model: "conversations",
           key: "id",
         },
-        onUpdate: "CASCADE",
-        onDelete: "CASCADE",
       },
       created_at: {
         allowNull: false,

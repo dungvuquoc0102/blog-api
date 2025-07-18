@@ -1,12 +1,13 @@
 "use strict";
 
+/** @type {import('sequelize-cli').Migration} */
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable("tags", {
       id: {
-        autoIncrement: true,
-        primaryKey: true,
         type: Sequelize.INTEGER({ unsigned: true }),
+        primaryKey: true,
+        autoIncrement: true,
       },
       name: {
         type: Sequelize.STRING(50),
@@ -14,12 +15,12 @@ module.exports = {
         unique: true,
       },
       created_at: {
-        allowNull: false,
         type: Sequelize.DATE,
+        allowNull: false,
       },
       updated_at: {
-        allowNull: false,
         type: Sequelize.DATE,
+        allowNull: false,
       },
     });
   },

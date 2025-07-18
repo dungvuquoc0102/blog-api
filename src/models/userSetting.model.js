@@ -1,42 +1,36 @@
 module.exports = (sequelize, DataTypes) => {
-  const Comment = sequelize.define(
-    "Comment",
+  const Topic = sequelize.define(
+    "Topic",
     {
       id: {
         type: DataTypes.INTEGER({ unsigned: true }),
         primaryKey: true,
         autoIncrement: true,
       },
-      userId: {
+      user_id: {
         type: DataTypes.INTEGER({ unsigned: true }),
         allowNull: false,
+        unique: true,
         references: {
           model: "users",
           key: "id",
         },
       },
-      postId: {
-        type: DataTypes.INTEGER({ unsigned: true }),
-        allowNull: false,
-        references: {
-          model: "posts",
-          key: "id",
-        },
-      },
-      parentId: {
-        type: DataTypes.INTEGER({ unsigned: true }),
+      data: {
+        type: DataTypes.JSON,
         allowNull: true,
-        references: {
-          model: "comments",
-          key: "id",
-        },
       },
-      content: {
-        type: DataTypes.TEXT,
+      createdAt: {
+        type: DataTypes.DATE,
+        allowNull: false,
+      },
+      updatedAt: {
+        type: DataTypes.DATE,
         allowNull: false,
       },
     },
     {
+      table: "user_settings",
       underscored: true,
       timestamps: true,
       createdAt: "created_at",
@@ -45,5 +39,5 @@ module.exports = (sequelize, DataTypes) => {
       deletedAt: "deleted_at",
     }
   );
-  return Comment;
+  return Topic;
 };

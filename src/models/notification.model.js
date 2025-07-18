@@ -1,39 +1,26 @@
 module.exports = (sequelize, DataTypes) => {
-  const Topic = sequelize.define(
-    "Topic",
+  const Notification = sequelize.define(
+    "Notification",
     {
       id: {
         type: DataTypes.INTEGER({ unsigned: true }),
         primaryKey: true,
         autoIncrement: true,
       },
-      name: {
-        type: DataTypes.STRING(100),
+      type: {
+        type: DataTypes.STRING(50),
         allowNull: false,
       },
-      slug: {
+      title: {
         type: DataTypes.STRING(255),
         allowNull: false,
-        unique: true,
       },
-      image: {
-        type: DataTypes.STRING(255),
-        allowNull: true,
-      },
-      description: {
-        type: DataTypes.TEXT,
-        allowNull: true,
-      },
-      postsCount: {
+      notifiableId: {
         type: DataTypes.INTEGER({ unsigned: true }),
-        defaultValue: 0,
-      },
-      createdAt: {
-        type: DataTypes.DATE,
         allowNull: false,
       },
-      updatedAt: {
-        type: DataTypes.DATE,
+      notifiableType: {
+        type: DataTypes.STRING(100),
         allowNull: false,
       },
     },
@@ -46,5 +33,5 @@ module.exports = (sequelize, DataTypes) => {
       deletedAt: "deleted_at",
     }
   );
-  return Topic;
+  return Notification;
 };

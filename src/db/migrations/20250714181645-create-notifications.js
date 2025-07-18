@@ -1,12 +1,13 @@
 "use strict";
 
+/** @type {import('sequelize-cli').Migration} */
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable("notifications", {
       id: {
-        autoIncrement: true,
-        primaryKey: true,
         type: Sequelize.INTEGER({ unsigned: true }),
+        primaryKey: true,
+        autoIncrement: true,
       },
       type: {
         type: Sequelize.STRING(50),
@@ -25,12 +26,12 @@ module.exports = {
         allowNull: false,
       },
       created_at: {
-        allowNull: false,
         type: Sequelize.DATE,
+        allowNull: false,
       },
       updated_at: {
-        allowNull: false,
         type: Sequelize.DATE,
+        allowNull: false,
       },
     });
   },
