@@ -21,7 +21,7 @@ exports.registerValidator = [
         options: async (value) => {
           const existing = await User.findOne({ where: { email: value } });
           if (existing) {
-            throw new Error("Email đã được sử dụng");
+            throw new Error("Email không hợp lệ");
           }
           return true;
         },
@@ -34,19 +34,6 @@ exports.registerValidator = [
             throw new Error(
               "Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt"
             );
-          }
-          return true;
-        },
-      },
-    },
-    confirmPassword: {
-      notEmpty: {
-        errorMessage: "Vui lòng nhập lại mật khẩu xác nhận",
-      },
-      custom: {
-        options: (value, { req }) => {
-          if (value !== req.body.password) {
-            throw new Error("Mật khẩu xác nhận không khớp");
           }
           return true;
         },
@@ -147,6 +134,20 @@ exports.registerValidator = [
       optional: true,
       isISO8601: {
         errorMessage: "verifiedAt phải là ngày hợp lệ",
+      },
+    },
+  }),
+  handleValidation,
+];
+
+exports.verifyEmailValidator = [
+  checkSchema({
+    token: {
+      notEmpty: {
+        errorMessage: "Token không hợp lệ",
+      },
+      isString: {
+        errorMessage: "Token không hợp lệ",
       },
     },
   }),

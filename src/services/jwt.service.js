@@ -28,9 +28,6 @@ exports.verifyAccessToken = (token) => {
 };
 
 exports.generateVerificationToken = (userId) => {
-  console.log(process.env.JWT_VERIFICATION_SECRET);
-  console.log(parseInt(process.env.JWT_VERIFICATION_EXPIRES_IN));
-
   const token = jwt.sign({ userId }, process.env.JWT_VERIFICATION_SECRET, {
     expiresIn: parseInt(process.env.JWT_VERIFICATION_EXPIRES_IN),
   });

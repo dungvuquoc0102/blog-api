@@ -35,9 +35,9 @@ const createRefreshToken = async (userId) => {
   );
 
   return await RefreshToken.create({
-    userId: userId,
-    token: token,
-    expiredAt: expiredAt,
+    userId,
+    token,
+    expiredAt,
   });
 };
 

@@ -23,7 +23,7 @@
       .btn {
         display: inline-block;
         background-color: #0d6efd;
-        color: #fff;
+        color: #fff !important;
         padding: 12px 24px;
         border-radius: 5px;
         text-decoration: none;
@@ -38,7 +38,6 @@
 
       a {
         word-break: break-all;
-        color: #fff;
       }
     </style>
   </head>
@@ -53,8 +52,8 @@
       <a href="<%= verifyUrl %>" class="btn">Xác thực email</a>
 
       <p>
-        Nếu nút không hoạt động, bạn có thể sao chép và dán đường dẫn sau vào
-        trình duyệt:
+        Nếu nút không hoạt động, bạn có thể nhấn hoặc sao chép và dán đường dẫn
+        sau vào trình duyệt:
       </p>
       <p><a href="<%= verifyUrl %>"><%= verifyUrl %></a></p>
 

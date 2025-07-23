@@ -22,7 +22,6 @@ const queueWorker = async () => {
 
       // Xử lý từng loại job
       const handle = handlers[job.type];
-
       await handle(job.payload);
 
       // Cập nhật hoàn tất

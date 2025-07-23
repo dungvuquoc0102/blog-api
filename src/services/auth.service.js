@@ -23,16 +23,35 @@ const register = async (email, password, firstName, lastName) => {
 
     queueService.dispatchQueue("sendVerifyEmail", { userId: user.id });
 
-    const tokenData = jwtService.generateAccessToken(user.id);
-    const refreshToken = await refreshTokenService.createRefreshToken(user.id);
-
-    return {
-      ...tokenData,
-      refreshToken,
-    };
+    return;
   } catch (error) {
     console.error("Lỗi trong authService.register:", error);
     throw new Error("Đăng ký thất bại. Vui lòng thử lại sau.");
+  }
+};
+
+const verifyToken = async (token) => {
+  try {
+    const payload = jwtService.verifyVerificationToken(token);
+
+    if (typeof payload?.userId !== "number") return null;
+
+    const user = await User.findByPk(payload.userId);
+
+    if (!user || user.verifiedAt) return null;
+
+    await user.update({ verifiedAt: new Date() });
+
+    const accessTokenData = jwtService.generateAccessToken(user.id);
+    const refreshToken = await refreshTokenService.createRefreshToken(user.id);
+
+    return {
+      ...accessTokenData,
+      refreshToken: refreshToken.token,
+    };
+  } catch (err) {
+    console.error("Lỗi verifyToken trong authService:", err);
+    return null;
   }
 };
 
@@ -92,6 +111,7 @@ const refreshAccessToken = async (refreshTokenString) => {
 
 module.exports = {
   register,
+  verifyToken,
   login,
   refreshAccessToken,
 };

@@ -40,6 +40,7 @@ app.use("/api/v1", router);
 app.use(notFoundHandler);
 app.use(errorsHandler);
 
+const greenColor = "\x1b[32m";
 app.listen(3000, () => {
-  console.log("Server is running on port 3000");
+  console.log(greenColor + "Server is running on port 3000..." + greenColor);
 });

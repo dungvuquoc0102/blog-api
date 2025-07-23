@@ -4,17 +4,30 @@ const register = async (req, res) => {
   try {
     const { firstName, lastName, email, password } = req.body;
 
-    const tokenData = await authService.register(
-      email,
-      password,
-      firstName,
-      lastName
-    );
+    await authService.register(email, password, firstName, lastName);
 
-    // check verifyAt for res token
-    res.success(tokenData, "Đăng ký thành công");
+    res.success(
+      null,
+      `Đăng ký thành công. Vui lòng kiểm tra email (${email}) để xác thực tài khoản.`
+    );
   } catch (error) {
     res.error(400, "Đăng ký thất bại", error.message);
+  }
+};
+
+const verifyEmail = async (req, res) => {
+  try {
+    const { token } = req.body;
+    const tokenData =
+      (await authService.verifyToken(token)) ||
+      (() => {
+        throw new Error("Token không hợp lệ hoặc đã hết hạn");
+      })();
+
+    res.success(tokenData, "Xác thực email thành công");
+  } catch (error) {
+    console.error("Lỗi xảy ra ở authController:", error);
+    res.error(400, "Xác thực email thất bại", error.message);
   }
 };
 
@@ -44,4 +57,4 @@ const refreshToken = async (req, res) => {
   }
 };
 
-module.exports = { register, login, me, refreshToken };
+module.exports = { register, verifyEmail, login, me, refreshToken };
