@@ -36,6 +36,7 @@ const login = async (req, res) => {
     const { email, password } = req.body;
 
     const tokenData = await authService.login(email, password);
+
     res.success(tokenData, "Đăng nhập thành công");
   } catch (error) {
     res.error(400, "Đăng nhập thất bại", error.message);
@@ -43,7 +44,23 @@ const login = async (req, res) => {
 };
 
 const me = async (req, res) => {
-  response.success(res, 200, req.user);
+  res.success(req.user, "Lấy thông tin user thành công");
+};
+
+const logout = async (req, res) => {
+  try {
+    const { refreshToken } = req.body;
+
+    if (!refreshToken) {
+      return res.error(400, "Thiếu refresh token");
+    }
+
+    await authService.revokeToken(refreshToken);
+
+    res.success(null, "Đăng xuất thành công");
+  } catch (error) {
+    res.error(400, "Đăng xuất thất bại", error.message);
+  }
 };
 
 const refreshToken = async (req, res) => {
@@ -51,10 +68,10 @@ const refreshToken = async (req, res) => {
     const tokenData = await authService.refreshAccessToken(
       req.body.refresh_token
     );
-    response.success(res, 200, tokenData);
+    res.success(tokenData, "Reset accessToken thành công");
   } catch (error) {
-    response.error(res, 403, error.message);
+    res.error(403, "Reset accessToken không thành công", error.message);
   }
 };
 
-module.exports = { register, verifyEmail, login, me, refreshToken };
+module.exports = { register, verifyEmail, login, me, logout, refreshToken };

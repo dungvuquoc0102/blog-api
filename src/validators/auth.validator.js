@@ -11,7 +11,7 @@ const { User } = require("@/models");
 const strongPasswordRegex =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
 
-exports.registerValidator = [
+register = [
   checkSchema({
     email: {
       isEmail: true,
@@ -140,21 +140,7 @@ exports.registerValidator = [
   handleValidation,
 ];
 
-exports.verifyEmailValidator = [
-  checkSchema({
-    token: {
-      notEmpty: {
-        errorMessage: "Token không hợp lệ",
-      },
-      isString: {
-        errorMessage: "Token không hợp lệ",
-      },
-    },
-  }),
-  handleValidation,
-];
-
-exports.loginValidator = [
+login = [
   checkSchema({
     email: {
       notEmpty: {
@@ -182,3 +168,10 @@ exports.loginValidator = [
   }),
   handleValidation,
 ];
+
+const authValidator = {
+  register,
+  login,
+};
+
+module.exports = authValidator;

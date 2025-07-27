@@ -10,6 +10,7 @@ const errorsHandler = require("@/middlewares/errorHandler");
 const handlePagination = require("@/middlewares/handlePagination");
 const stripForbiddenFields = require("@/middlewares/stripForbiddenFields");
 const handleResponse = require("@/middlewares/handleResponse");
+const pusher = require("@/utils/socket");
 
 const app = express();
 
@@ -35,6 +36,16 @@ app.use(handleResponse);
 
 // Route
 app.use("/api/v1", router);
+// Message
+app.post("/message/send", (req, res) => {
+  pusher.trigger("K12", "new-message", {
+    message: req.body.message,
+  });
+  res.status(200).json({
+    message: "Success",
+    data: JSON.stringify(req.body.message),
+  });
+});
 
 // Error Handler
 app.use(notFoundHandler);

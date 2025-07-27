@@ -1,17 +1,16 @@
-const topicsService = require("@/services/topic.service");
+const topicService = require("@/services/topic.service");
 
-const response = require("@/utils/response");
 const throwError = require("@/utils/throwError");
 
 const index = async (req, res) => {
   const { page, limit } = req;
-  const { items, total } = await topicsService.getAll(page, limit);
+  const { items, total } = await topicService.getAll(page, limit);
   res.paginate({ items, total });
 };
 
 const show = async (req, res) => {
   const topic_name = req.params.topic_name;
-  const topic = await topicsService.getById(topic_name);
+  const topic = await topicService.getById(topic_name);
 
   if (!topic) throwError(404, "Not Found.");
 
@@ -19,12 +18,12 @@ const show = async (req, res) => {
 };
 
 const store = async (req, res) => {
-  const topic = await topicsService.create(req.body);
+  const topic = await topicService.create(req.body);
   response.success(res, 201, topic);
 };
 
 const update = async (req, res) => {
-  const topic = await topicsService.update(req.params.topic_name, req.body);
+  const topic = await topicService.update(req.params.topic_name, req.body);
 
   if (!topic) throwError(404, "Not Found.");
 
@@ -32,7 +31,7 @@ const update = async (req, res) => {
 };
 
 const destroy = async (req, res) => {
-  const result = await topicsService.remove(req.params.topic_name);
+  const result = await topicService.remove(req.params.topic_name);
 
   if (!result) throwError(404, "Not Found.");
 

@@ -83,13 +83,18 @@ module.exports = (sequelize, DataTypes) => {
       },
     },
     {
-      underscored: true, // Converts camelCase → snake_case, but doesn't apply to timestamps by default
-      timestamps: true, // Enables createdAt & updatedAt auto fields
-      createdAt: "created_at",
-      updatedAt: "updated_at", // Must define manually because timestamps ignore 'underscored'
       paranoid: true, // Enables soft delete (logical delete instead of physical)
-      deletedAt: "deleted_at", // Must define manually because timestamps ignore 'underscored'
     }
   );
+
+  User.associate = function (models) {
+    User.belongsToMany(models.Conversation, {
+      through: "conversation_users",
+      foreignKey: "user_id",
+      otherKey: "conversation_id",
+      as: "conversations",
+    });
+  };
+
   return User;
 };

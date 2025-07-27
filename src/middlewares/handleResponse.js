@@ -12,7 +12,6 @@ module.exports = (req, res, next) => {
     message = "Lỗi không xác định",
     error = null
   ) => {
-    console.log(error);
     return res.status(statusCode).json({
       success: false,
       message,
@@ -20,7 +19,7 @@ module.exports = (req, res, next) => {
     });
   };
 
-  res.paginate = (res, items, total, page, limit, statusCode = 200) => {
+  res.paginate = (items, total, page, limit, statusCode = 200) => {
     const totalPages = Math.ceil(total / limit);
 
     return res.status(statusCode).json({

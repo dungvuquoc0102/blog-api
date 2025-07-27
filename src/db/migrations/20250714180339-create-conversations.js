@@ -5,11 +5,9 @@ module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable("conversations", {
       id: {
-        autoIncrement: true,
+        type: Sequelize.INTEGER.UNSIGNED,
         primaryKey: true,
-        type: Sequelize.INTEGER({
-          unsigned: true,
-        }),
+        autoIncrement: true,
       },
       name: {
         type: Sequelize.STRING(100),
@@ -23,13 +21,17 @@ module.exports = {
         type: Sequelize.DATE,
         allowNull: true,
       },
-      created_at: {
-        allowNull: false,
+      deleted_at: {
         type: Sequelize.DATE,
+        allowNull: true,
+      },
+      created_at: {
+        type: Sequelize.DATE,
+        allowNull: false,
       },
       updated_at: {
-        allowNull: false,
         type: Sequelize.DATE,
+        allowNull: false,
       },
     });
   },

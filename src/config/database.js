@@ -2,14 +2,18 @@ require("dotenv").config();
 
 module.exports = {
   development: {
-    username: "root",
-    password: "",
-    database: "dung_blog_dev",
-    host: "127.0.0.1",
-    port: 3306,
+    username: process.env.DEV_DB_USERNAME,
+    password: process.env.DEV_DB_PASSWORD,
+    database: process.env.DEV_DB_NAME,
+    host: process.env.DEV_DB_HOSTNAME,
+    port: process.env.DEV_DB_PORT,
     dialect: "mysql",
     dialectOptions: {
       bigNumberStrings: true,
+    },
+    define: {
+      underscored: true,
+      timestamps: true,
     },
     logging: false,
   },
@@ -22,6 +26,10 @@ module.exports = {
     dialect: "mysql",
     dialectOptions: {
       bigNumberStrings: true,
+    },
+    define: {
+      underscored: true,
+      timestamps: true,
     },
   },
   production: {
@@ -36,6 +44,10 @@ module.exports = {
       // ssl: {
       //   ca: fs.readFileSync(__dirname + "/mysql-ca-main.crt"),
       // },
+    },
+    define: {
+      underscored: true,
+      timestamps: true,
     },
   },
 };

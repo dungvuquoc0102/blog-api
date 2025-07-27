@@ -4,7 +4,7 @@ const response = require("@/utils/response");
 const throwError = require("@/utils/throwError");
 
 const index = async (req, res) => {
-  const { page, limit } = req;
+  const { page = 1, limit = 10 } = req;
   const { items, total } = await postsService.getAll(page, limit);
   res.paginate({ items, total });
 };

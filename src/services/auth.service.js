@@ -1,4 +1,4 @@
-const { User } = require("@/models");
+const { User, RefreshToken } = require("@/models");
 const { hash, compare } = require("@/utils/bcrypt");
 const refreshTokenService = require("./refreshToken.service");
 const jwtService = require("./jwt.service");
@@ -78,7 +78,7 @@ const login = async (email, password) => {
 
   return {
     ...tokenData,
-    refresh_token: refreshToken.token,
+    refreshToken: refreshToken.token,
   };
 };
 
@@ -109,9 +109,22 @@ const refreshAccessToken = async (refreshTokenString) => {
   };
 };
 
+const revokeToken = async (refreshToken) => {
+  const deleted = await RefreshToken.destroy({
+    where: { token: refreshToken },
+  });
+
+  if (!deleted) {
+    throw new Error("Refresh token không tồn tại hoặc đã bị xoá");
+  }
+
+  return true;
+};
+
 module.exports = {
   register,
   verifyToken,
   login,
   refreshAccessToken,
+  revokeToken,
 };

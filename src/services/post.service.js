@@ -8,11 +8,15 @@ class PostsService {
     const offset = (page - 1) * limit;
 
     const { rows: items, count: total } = await Post.findAndCountAll({
-      include: [Topic, Comment],
+      // include: [Topic, Comment],
+      attributes: ["createdAt"],
       limit,
       offset,
       order: [["created_at", "DESC"]],
     });
+
+    const post = await Post.findAll();
+    console.log(post);
 
     return { items, total };
   }

@@ -18,7 +18,7 @@ const show = async (req, res) => {
 
 const store = async (req, res) => {
   const comment = await commentsService.create(req.body);
-  response.success(res, 201, comment);
+  res.success(comment, 201);
 };
 
 const update = async (req, res) => {

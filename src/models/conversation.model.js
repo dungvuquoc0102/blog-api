@@ -23,13 +23,23 @@ module.exports = (sequelize, DataTypes) => {
       },
     },
     {
-      underscored: true,
-      timestamps: true,
-      createdAt: "created_at",
-      updatedAt: "updated_at",
       paranoid: true,
-      deletedAt: "deleted_at",
     }
   );
+
+  Conversation.associate = function (models) {
+    Conversation.belongsToMany(models.User, {
+      through: "conversation_users",
+      foreignKey: "conversation_id",
+      otherKey: "user_id",
+      as: "participants",
+    });
+
+    Conversation.hasMany(models.Message, {
+      foreignKey: "conversation_id",
+      as: "messages",
+    });
+  };
+
   return Conversation;
 };

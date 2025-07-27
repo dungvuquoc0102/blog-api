@@ -4,10 +4,10 @@ const topicsController = require("@/controllers/topic.controller");
 const router = express.Router();
 
 router.get("/", topicsController.index);
-router.get("/:topic_name", topicsController.show);
+router.get("/:slug", topicsController.show);
 router.post("/", topicsController.store);
-router.put("/:topic_name", topicsController.update);
-router.patch("/:topic_name", topicsController.update);
-router.delete("/:topic_name", topicsController.destroy);
+router.put("/:slug", topicsController.update);
+router.patch("/:slug", topicsController.update);
+router.delete("/:slug", topicsController.destroy);
 
 module.exports = router;

@@ -33,10 +33,6 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       tableName: "refresh_tokens",
-      underscored: true,
-      timestamps: true,
-      createdAt: "created_at",
-      updatedAt: "updated_at",
     }
   );
   return RefreshToken;
