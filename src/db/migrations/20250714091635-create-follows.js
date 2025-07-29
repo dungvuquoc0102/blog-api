@@ -5,16 +5,12 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable("follows", {
       id: {
-        autoIncrement: true,
+        type: Sequelize.INTEGER.UNSIGNED,
         primaryKey: true,
-        type: Sequelize.INTEGER({
-          unsigned: true,
-        }),
+        autoIncrement: true,
       },
       following_id: {
-        type: Sequelize.INTEGER({
-          unsigned: true,
-        }),
+        type: Sequelize.INTEGER.UNSIGNED,
         allowNull: false,
         references: {
           model: "users",
@@ -22,9 +18,7 @@ module.exports = {
         },
       },
       followed_id: {
-        type: Sequelize.INTEGER({
-          unsigned: true,
-        }),
+        type: Sequelize.INTEGER.UNSIGNED,
         allowNull: false,
         references: {
           model: "users",
@@ -32,12 +26,12 @@ module.exports = {
         },
       },
       created_at: {
-        allowNull: false,
         type: Sequelize.DATE,
+        allowNull: false,
       },
       updated_at: {
-        allowNull: false,
         type: Sequelize.DATE,
+        allowNull: false,
       },
     });
   },

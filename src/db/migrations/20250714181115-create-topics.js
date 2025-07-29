@@ -5,7 +5,7 @@ module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable("topics", {
       id: {
-        type: Sequelize.INTEGER({ unsigned: true }),
+        type: Sequelize.INTEGER.UNSIGNED,
         primaryKey: true,
         autoIncrement: true,
       },
@@ -27,7 +27,7 @@ module.exports = {
         allowNull: true,
       },
       posts_count: {
-        type: Sequelize.INTEGER({ unsigned: true }),
+        type: Sequelize.INTEGER.UNSIGNED,
         defaultValue: 0,
       },
       created_at: {

@@ -5,12 +5,12 @@ module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable("posts", {
       id: {
-        autoIncrement: true,
+        type: Sequelize.INTEGER.UNSIGNED,
         primaryKey: true,
-        type: Sequelize.INTEGER({ unsigned: true }),
+        autoIncrement: true,
       },
       user_id: {
-        type: Sequelize.INTEGER({ unsigned: true }),
+        type: Sequelize.INTEGER.UNSIGNED,
         defaultValue: 0,
         references: {
           model: "users",
@@ -55,20 +55,24 @@ module.exports = {
         defaultValue: "draft",
       },
       views_count: {
-        type: Sequelize.INTEGER({ unsigned: true }),
+        type: Sequelize.INTEGER.UNSIGNED,
         defaultValue: 0,
       },
       likes_count: {
-        type: Sequelize.INTEGER({ unsigned: true }),
+        type: Sequelize.INTEGER.UNSIGNED,
         defaultValue: 0,
       },
       published_at: {
         type: Sequelize.DATE,
         allowNull: true,
       },
-      created_at: {
-        allowNull: false,
+      deleted_at: {
         type: Sequelize.DATE,
+        allowNull: false,
+      },
+      created_at: {
+        type: Sequelize.DATE,
+        allowNull: false,
       },
       updated_at: {
         type: Sequelize.DATE,

@@ -7,10 +7,10 @@ module.exports = {
       id: {
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER({ unsigned: true }),
+        type: Sequelize.INTEGER.UNSIGNED,
       },
       user_id: {
-        type: Sequelize.INTEGER({ unsigned: true }),
+        type: Sequelize.INTEGER.UNSIGNED,
         allowNull: false,
         unique: true,
         references: {

@@ -5,12 +5,12 @@ module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable("likes", {
       id: {
-        type: Sequelize.INTEGER({ unsigned: true }),
+        type: Sequelize.INTEGER.UNSIGNED,
         primaryKey: true,
         autoIncrement: true,
       },
       user_id: {
-        type: Sequelize.INTEGER({ unsigned: true }),
+        type: Sequelize.INTEGER.UNSIGNED,
         allowNull: false,
         references: {
           model: "users",
@@ -18,7 +18,7 @@ module.exports = {
         },
       },
       likeable_id: {
-        type: Sequelize.INTEGER({ unsigned: true }),
+        type: Sequelize.INTEGER.UNSIGNED,
         allowNull: false,
       },
       likeable_type: {

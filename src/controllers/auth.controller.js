@@ -1,4 +1,6 @@
 const authService = require("@/services/auth.service");
+const { User } = require("@/models");
+const { dispatchQueue } = require("@/services/queue.service");
 
 const register = async (req, res) => {
   try {
@@ -33,9 +35,13 @@ const verifyEmail = async (req, res) => {
 
 const login = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, rememberMe } = req.body;
 
     const tokenData = await authService.login(email, password);
+
+    if (!rememberMe) {
+      delete tokenData.refreshToken;
+    }
 
     res.success(tokenData, "Đăng nhập thành công");
   } catch (error) {
@@ -51,11 +57,9 @@ const logout = async (req, res) => {
   try {
     const { refreshToken } = req.body;
 
-    if (!refreshToken) {
-      return res.error(400, "Thiếu refresh token");
+    if (refreshToken) {
+      await authService.revokeToken(refreshToken);
     }
-
-    await authService.revokeToken(refreshToken);
 
     res.success(null, "Đăng xuất thành công");
   } catch (error) {
@@ -73,5 +77,31 @@ const refreshToken = async (req, res) => {
     res.error(403, "Reset accessToken không thành công", error.message);
   }
 };
+
+const forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+    const user = await User.findOne({
+      where: {
+        email,
+      },
+    });
+
+    if (!user) {
+      res.error(400, "Email không hợp lệ");
+    }
+
+    await dispatchQueue("sendForgotPasswordEmail", { userId: user.id });
+    //continue...
+  } catch (error) {
+    res.error(
+      400,
+      "Gửi email để reset password không thành công",
+      error.message
+    );
+  }
+};
+// bấm đăng ký -> gửi tk mật k
+// Luồng: bấm quên mật khẩu -> sang trang nhập email -> gửi lên server để có email gửi token -> gửi email với link tới trang reset -> tại trang reset verify token rồi gửi lại mật khẩu
 
 module.exports = { register, verifyEmail, login, me, logout, refreshToken };

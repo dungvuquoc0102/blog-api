@@ -9,6 +9,9 @@ const router = express.Router();
 router.post("/verify-email", authController.verifyEmail);
 router.post("/refresh", authController.refreshToken);
 router.post("/logout", authController.logout);
+router.post("/forgot-password", authController.forgotPassword); // Để gửi email lên để gửi email
+router.post("/reset-password", authController.resetPassword); //
+router.post("/reset-password", authController.resetPassword); //
 // Validator
 router.post("/register", authValidator.register, authController.register);
 router.post("/login", authValidator.login, authController.login);

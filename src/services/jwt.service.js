@@ -1,12 +1,7 @@
 const jwt = require("jsonwebtoken");
 const { JWT_SECRET, JWT_EXPIRES_IN, TOKEN_TYPE } = require("@/config/auth");
 
-/**
- * Generate access token for user
- * @param {number} userId - User ID
- * @returns {Object} Token object with access_token, token_type, expires_in
- */
-exports.generateAccessToken = (userId) => {
+const generateAccessToken = (userId) => {
   const token = jwt.sign({ userId }, JWT_SECRET, {
     expiresIn: JWT_EXPIRES_IN,
   });
@@ -18,16 +13,11 @@ exports.generateAccessToken = (userId) => {
   };
 };
 
-/**
- * Verify access token
- * @param {string} token - JWT token
- * @returns {Object} Decoded payload
- */
-exports.verifyAccessToken = (token) => {
+const verifyAccessToken = (token) => {
   return jwt.verify(token, JWT_SECRET);
 };
 
-exports.generateVerificationToken = (userId) => {
+const generateVerificationToken = (userId) => {
   const token = jwt.sign({ userId }, process.env.JWT_VERIFICATION_SECRET, {
     expiresIn: parseInt(process.env.JWT_VERIFICATION_EXPIRES_IN),
   });
@@ -39,6 +29,13 @@ exports.generateVerificationToken = (userId) => {
   };
 };
 
-exports.verifyVerificationToken = (token) => {
+const verifyVerificationToken = (token) => {
   return jwt.verify(token, process.env.JWT_VERIFICATION_SECRET);
+};
+
+module.exports = {
+  generateAccessToken,
+  verifyAccessToken,
+  generateVerificationToken,
+  verifyVerificationToken,
 };

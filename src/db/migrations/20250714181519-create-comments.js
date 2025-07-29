@@ -5,12 +5,12 @@ module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable("comments", {
       id: {
-        type: Sequelize.INTEGER({ unsigned: true }),
+        type: Sequelize.INTEGER.UNSIGNED,
         primaryKey: true,
         autoIncrement: true,
       },
       user_id: {
-        type: Sequelize.INTEGER({ unsigned: true }),
+        type: Sequelize.INTEGER.UNSIGNED,
         allowNull: false,
         references: {
           model: "users",
@@ -18,7 +18,7 @@ module.exports = {
         },
       },
       post_id: {
-        type: Sequelize.INTEGER({ unsigned: true }),
+        type: Sequelize.INTEGER.UNSIGNED,
         allowNull: false,
         references: {
           model: "posts",
@@ -26,7 +26,7 @@ module.exports = {
         },
       },
       parent_id: {
-        type: Sequelize.INTEGER({ unsigned: true }),
+        type: Sequelize.INTEGER.UNSIGNED,
         allowNull: true,
         references: {
           model: "comments",

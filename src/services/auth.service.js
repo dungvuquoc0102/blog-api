@@ -55,6 +55,30 @@ const verifyToken = async (token) => {
   }
 };
 
+const forgotPassword = async (email) => {
+  const user = await User.findOne({ where: { email } });
+  if (!user) throw new Error("Email không hợp lệ");
+
+  await dispatchQueue("sendForgotPasswordEmail", { userId: user.id });
+
+  return true;
+};
+
+const resetPassword = async (token, newPassword) => {
+  const tokenData = await verifyToken(token);
+  if (!tokenData?.userId) throw new Error("Token không hợp lệ hoặc đã hết hạn");
+
+  const user = await User.findByPk(tokenData.userId);
+  if (!user) throw new Error("Người dùng không tồn tại");
+
+  const hashedPassword = await hash(newPassword);
+  user.password = hashedPassword;
+
+  await user.save();
+
+  return true;
+};
+
 /**
  * Login user
  * @param {string} email - User email
