@@ -1,41 +1,68 @@
 const jwt = require("jsonwebtoken");
-const { JWT_SECRET, JWT_EXPIRES_IN, TOKEN_TYPE } = require("@/config/auth");
+const {
+  ACCESS_JWT_SECRET,
+  ACCESS_JWT_EXPIRES_IN,
+  TOKEN_TYPE,
+  VERIFYEMAIL_JWT_SECRET,
+  VERIFYEMAIL_JWT_EXPIRES_IN,
+  RESETPASSWORD_JWT_SECRET,
+  RESETPASSWORD_JWT_EXPIRES_IN,
+  REFRESH_TOKEN_EXPIRES_IN,
+} = require("@/config/auth");
 
 const generateAccessToken = (userId) => {
-  const token = jwt.sign({ userId }, JWT_SECRET, {
-    expiresIn: JWT_EXPIRES_IN,
+  const token = jwt.sign({ userId }, ACCESS_JWT_SECRET, {
+    expiresIn: ACCESS_JWT_EXPIRES_IN, // 5 minutes
   });
 
   return {
     accessToken: token,
+    expiresIn: ACCESS_JWT_EXPIRES_IN,
     tokenType: TOKEN_TYPE,
-    expiresIn: JWT_EXPIRES_IN,
   };
 };
 
 const verifyAccessToken = (token) => {
-  return jwt.verify(token, JWT_SECRET);
+  return jwt.verify(token, ACCESS_JWT_SECRET);
 };
 
-const generateVerificationToken = (userId) => {
-  const token = jwt.sign({ userId }, process.env.JWT_VERIFICATION_SECRET, {
-    expiresIn: parseInt(process.env.JWT_VERIFICATION_EXPIRES_IN),
+const generateVerifyEmailToken = (userId) => {
+  const token = jwt.sign({ userId }, VERIFYEMAIL_JWT_SECRET, {
+    expiresIn: VERIFYEMAIL_JWT_EXPIRES_IN, // 12 hours
   });
 
   return {
-    verifyToken: token,
+    verifyEmailToken: token,
+    expiresIn: VERIFYEMAIL_JWT_EXPIRES_IN,
     tokenType: TOKEN_TYPE,
-    expiresIn: parseInt(process.env.JWT_VERIFICATION_EXPIRES_IN),
   };
 };
 
-const verifyVerificationToken = (token) => {
-  return jwt.verify(token, process.env.JWT_VERIFICATION_SECRET);
+const verifyVerifyEmailToken = (token) => {
+  return jwt.verify(token, VERIFYEMAIL_JWT_SECRET);
+};
+
+const generateResetPasswordToken = (userId) => {
+  const token = jwt.sign({ userId }, RESETPASSWORD_JWT_SECRET, {
+    expiresIn: RESETPASSWORD_JWT_EXPIRES_IN, // 5 minutes
+  });
+
+  return {
+    resetPasswordToken: token,
+    expiresIn: RESETPASSWORD_JWT_EXPIRES_IN,
+    tokenType: TOKEN_TYPE,
+  };
+};
+
+const verifyResetPasswordToken = (token) => {
+  return jwt.verify(token, RESETPASSWORD_JWT_SECRET);
 };
 
 module.exports = {
   generateAccessToken,
   verifyAccessToken,
-  generateVerificationToken,
-  verifyVerificationToken,
+  generateVerifyEmailToken,
+  verifyVerifyEmailToken,
+  generateResetPasswordToken,
+  verifyResetPasswordToken,
 };

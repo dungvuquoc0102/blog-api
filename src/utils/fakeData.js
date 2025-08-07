@@ -11,6 +11,7 @@ fakeUser = (length = 10) => {
       last_name: faker.person.lastName(),
       username: faker.internet.username(),
       avatar: faker.image.avatar(),
+      backgroundImage: faker.image.url(),
       title: faker.person.jobTitle(),
       about: faker.lorem.sentence(),
       posts_count: faker.number.int({ min: 0, max: 100 }),

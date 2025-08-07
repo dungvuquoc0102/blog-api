@@ -17,7 +17,7 @@ module.exports = {
       },
       password: {
         type: Sequelize.STRING(255),
-        allowNull: false,
+        allowNull: true,
       },
       two_factor_enabled: {
         type: Sequelize.TINYINT(1),
@@ -42,6 +42,10 @@ module.exports = {
         defaultValue: null,
       },
       avatar: {
+        type: Sequelize.STRING(255),
+        defaultValue: null,
+      },
+      backgroundImage: {
         type: Sequelize.STRING(255),
         defaultValue: null,
       },
@@ -83,6 +87,14 @@ module.exports = {
       },
       reset_password_at: {
         type: Sequelize.DATE,
+        defaultValue: null,
+      },
+      provider: {
+        type: Sequelize.STRING(50),
+        defaultValue: "local",
+      },
+      providerId: {
+        type: Sequelize.STRING(255),
         defaultValue: null,
       },
       deleted_at: {

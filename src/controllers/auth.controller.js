@@ -1,107 +1,126 @@
 const authService = require("@/services/auth.service");
-const { User } = require("@/models");
-const { dispatchQueue } = require("@/services/queue.service");
 
 const register = async (req, res) => {
   try {
-    const { firstName, lastName, email, password } = req.body;
+    const { email, password, firstName, lastName } = req.body;
 
     await authService.register(email, password, firstName, lastName);
 
     res.success(
       null,
-      `Đăng ký thành công. Vui lòng kiểm tra email (${email}) để xác thực tài khoản.`
+      `Đăng ký thành công. Vui lòng kiểm tra email (${email}) để xác thực tài khoản.`,
+      201
     );
   } catch (error) {
-    res.error(400, "Đăng ký thất bại", error.message);
+    res.error(400, "Đăng ký thất bại", error);
   }
 };
 
 const verifyEmail = async (req, res) => {
   try {
-    const { token } = req.body;
-    const tokenData =
-      (await authService.verifyToken(token)) ||
-      (() => {
-        throw new Error("Token không hợp lệ hoặc đã hết hạn");
-      })();
+    const { token: tokenString } = req.body;
+    const tokenData = await authService.verifyEmail(tokenString);
 
     res.success(tokenData, "Xác thực email thành công");
   } catch (error) {
-    console.error("Lỗi xảy ra ở authController:", error);
-    res.error(400, "Xác thực email thất bại", error.message);
+    if (error.message === "CONFLICT") {
+      return res.error(409, "Tài khoản đã được xác thực trước đó", error);
+    }
+    if (error.message === "UNAUTHORIZED") {
+      return res.error(401, "Token không hợp lệ hoặc đã hết hạn", error);
+    }
+
+    res.error(400, "Xác thực email thất bại", error);
   }
 };
 
 const login = async (req, res) => {
   try {
     const { email, password, rememberMe } = req.body;
-
-    const tokenData = await authService.login(email, password);
-
-    if (!rememberMe) {
-      delete tokenData.refreshToken;
-    }
+    const tokenData = await authService.login(email, password, rememberMe);
 
     res.success(tokenData, "Đăng nhập thành công");
   } catch (error) {
-    res.error(400, "Đăng nhập thất bại", error.message);
-  }
-};
-
-const me = async (req, res) => {
-  res.success(req.user, "Lấy thông tin user thành công");
-};
-
-const logout = async (req, res) => {
-  try {
-    const { refreshToken } = req.body;
-
-    if (refreshToken) {
-      await authService.revokeToken(refreshToken);
-    }
-
-    res.success(null, "Đăng xuất thành công");
-  } catch (error) {
-    res.error(400, "Đăng xuất thất bại", error.message);
-  }
-};
-
-const refreshToken = async (req, res) => {
-  try {
-    const tokenData = await authService.refreshAccessToken(
-      req.body.refresh_token
-    );
-    res.success(tokenData, "Reset accessToken thành công");
-  } catch (error) {
-    res.error(403, "Reset accessToken không thành công", error.message);
+    res.error(400, "Đăng nhập thất bại", error);
   }
 };
 
 const forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
-    const user = await User.findOne({
-      where: {
-        email,
-      },
-    });
 
-    if (!user) {
-      res.error(400, "Email không hợp lệ");
-    }
+    await authService.forgotPassword(email);
 
-    await dispatchQueue("sendForgotPasswordEmail", { userId: user.id });
-    //continue...
+    res.success(null, `Vui lòng kiểm tra email (${email}) để đổi lại mật khẩu`);
   } catch (error) {
-    res.error(
-      400,
-      "Gửi email để reset password không thành công",
-      error.message
-    );
+    res.error(400, "Quên mật khẩu thất bại", error);
   }
 };
-// bấm đăng ký -> gửi tk mật k
-// Luồng: bấm quên mật khẩu -> sang trang nhập email -> gửi lên server để có email gửi token -> gửi email với link tới trang reset -> tại trang reset verify token rồi gửi lại mật khẩu
 
-module.exports = { register, verifyEmail, login, me, logout, refreshToken };
+const verifyResetPassword = async (req, res) => {
+  try {
+    const { token: tokenString } = req.body;
+    await authService.verifyResetPassword(tokenString);
+
+    res.success(null, "Xác thực reset password thành công");
+  } catch (error) {
+    res.error(400, "Xác thực reset password thất bại", error);
+  }
+};
+
+const resetPassword = async (req, res) => {
+  try {
+    const { token: tokenString, password: newPassword } = req.body;
+    await authService.resetPassword(tokenString, newPassword);
+
+    res.success(null, "Reset password thành công");
+  } catch (error) {
+    res.error(400, "Reset password thất bại", error);
+  }
+};
+
+const me = async (req, res) => {
+  const userInfo = req.user;
+
+  res.success(userInfo, "Lấy thông tin user thành công");
+};
+
+const logout = async (req, res) => {
+  try {
+    const { refreshToken: refreshTokenString } = req.body;
+    await authService.revokeToken(refreshTokenString);
+
+    res.success(null, "Đăng xuất thành công");
+  } catch (error) {
+    res.error(400, "Đăng xuất thất bại", error);
+  }
+};
+
+const refreshToken = async (req, res) => {
+  try {
+    const { refreshToken: refreshTokenString } = req.body;
+    const newTokenData = await authService.refreshAccessToken(
+      refreshTokenString
+    );
+
+    res.success(newTokenData, "RefreshToken thành công");
+  } catch (error) {
+    if (error.message === "UNAUTHORIZED") {
+      res.error(401, "Token không hợp lệ hoặc đã hết hạn", error);
+    }
+
+    res.error(400, "RefreshToken thất bại", error);
+  }
+};
+
+module.exports = {
+  register,
+  verifyEmail,
+  login,
+  forgotPassword,
+  verifyResetPassword,
+  resetPassword,
+  me,
+  logout,
+  refreshToken,
+};

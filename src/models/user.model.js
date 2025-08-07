@@ -17,7 +17,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       password: {
         type: DataTypes.STRING(255),
-        allowNull: false,
+        allowNull: true,
       },
       twoFactorEnabled: {
         type: DataTypes.TINYINT(1),
@@ -42,6 +42,10 @@ module.exports = (sequelize, DataTypes) => {
         defaultValue: null,
       },
       avatar: {
+        type: DataTypes.STRING(255),
+        defaultValue: null,
+      },
+      backgroundImage: {
         type: DataTypes.STRING(255),
         defaultValue: null,
       },
@@ -79,6 +83,18 @@ module.exports = (sequelize, DataTypes) => {
       },
       verifiedAt: {
         type: DataTypes.DATE,
+        defaultValue: null,
+      },
+      resetPasswordAt: {
+        type: DataTypes.DATE,
+        defaultValue: null,
+      },
+      provider: {
+        type: DataTypes.STRING(50),
+        defaultValue: "local",
+      },
+      providerId: {
+        type: DataTypes.STRING(255),
         defaultValue: null,
       },
     },

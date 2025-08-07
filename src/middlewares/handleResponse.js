@@ -1,4 +1,4 @@
-module.exports = (req, res, next) => {
+module.exports = (_, res, next) => {
   res.success = (data, message = "Thành công", statusCode = 200) => {
     return res.status(statusCode).json({
       success: true,

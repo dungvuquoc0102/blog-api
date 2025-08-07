@@ -5,11 +5,8 @@ const handleValidation = (req, res, next) => {
   if (result.isEmpty()) {
     return next();
   }
-  // Need refactoring
-  res.status(400).json({
-    message: "Bad request",
-    errors: result.array(),
-  });
+
+  res.error(400, "Lỗi validate", { errors: result.array() });
 };
 
 module.exports = handleValidation;

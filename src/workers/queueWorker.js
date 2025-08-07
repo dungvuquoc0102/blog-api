@@ -1,8 +1,10 @@
 const { Queue } = require("@/models");
 const sendVerifyEmail = require("@/utils/sendVerifyEmail");
+const sendResetPasswordEmail = require("@/utils/sendResetPasswordEmail");
 
 const handlers = {
   sendVerifyEmail,
+  sendResetPasswordEmail,
 };
 const PROCESS_LIMIT = 5;
 
@@ -17,22 +19,22 @@ const queueWorker = async () => {
 
   for (const job of jobs) {
     try {
-      // Đánh dấu đang xử lý
       await job.update({ status: "processing" });
 
-      // Xử lý từng loại job
       const handle = handlers[job.type];
       await handle(job.payload);
 
-      // Cập nhật hoàn tất
       await job.update({ status: "completed" });
-    } catch (err) {
-      console.error("Lỗi trong queueWorker:", err.message);
-      await job.update({
-        status: "rejected",
-        errorMessage: err.message,
-      });
-      throw new Error("Thực hiện job thất bại.");
+    } catch (error) {
+      if (job.retries < PROCESS_LIMIT) {
+        await job.update({ status: "pending", retries: job.retries + 1 });
+      } else {
+        await job.update({
+          status: "rejected",
+          errorMessage: error.message,
+        });
+        throw new Error("Thực hiện job thất bại.");
+      }
     }
   }
 };

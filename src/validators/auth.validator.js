@@ -143,13 +143,13 @@ register = [
 login = [
   checkSchema({
     email: {
+      normalizeEmail: true,
       notEmpty: {
         errorMessage: "Email hoặc mật khẩu không hợp lệ",
       },
       isEmail: {
         errorMessage: "Email hoặc mật khẩu không hợp lệ",
       },
-      normalizeEmail: true,
       custom: {
         options: async (value) => {
           const user = await User.findOne({ where: { email: value } });

@@ -3,10 +3,6 @@ const generateToken = require("@/utils/generateToken");
 const { REFRESH_TOKEN_EXPIRES_IN } = require("@/config/auth");
 const { Op } = require("sequelize");
 
-/**
- * Generate unique refresh token
- * @returns {string} Unique refresh token
- */
 const generateUniqueToken = async () => {
   let randToken = null;
   do {
@@ -21,12 +17,7 @@ const generateUniqueToken = async () => {
   return randToken;
 };
 
-/**
- * Create refresh token for user
- * @param {number} userId - User ID
- * @returns {Object} RefreshToken instance
- */
-const createRefreshToken = async (userId) => {
+const create = async (userId) => {
   const token = await generateUniqueToken();
 
   const current = new Date();
@@ -41,13 +32,9 @@ const createRefreshToken = async (userId) => {
   });
 };
 
-/**
- * Find valid refresh token
- * @param {string} token - Refresh token string
- * @returns {Object|null} RefreshToken instance or null
- */
-const findValidRefreshToken = async (token) => {
-  return await RefreshToken.findOne({
+const findValid = async (token) => {
+  const refreshToken = await RefreshToken.findOne({
+    attributes: ["userId", "token"],
     where: {
       token: token,
       expired_at: {
@@ -55,18 +42,20 @@ const findValidRefreshToken = async (token) => {
       },
     },
   });
+
+  return refreshToken;
 };
 
-/**
- * Delete refresh token
- * @param {Object} refreshToken - RefreshToken instance
- */
-const deleteRefreshToken = async (refreshToken) => {
-  await refreshToken.destroy();
+const del = async (tokenString) => {
+  await RefreshToken.destroy({
+    where: {
+      token: tokenString,
+    },
+  });
 };
 
 module.exports = {
-  createRefreshToken,
-  findValidRefreshToken,
-  deleteRefreshToken,
+  create,
+  findValid,
+  del,
 };

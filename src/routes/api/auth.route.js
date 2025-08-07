@@ -6,16 +6,19 @@ const authValidator = require("@/validators/auth.validator");
 
 const router = express.Router();
 
-router.post("/verify-email", authController.verifyEmail);
-router.post("/refresh", authController.refreshToken);
-router.post("/logout", authController.logout);
-router.post("/forgot-password", authController.forgotPassword); // Để gửi email lên để gửi email
-router.post("/reset-password", authController.resetPassword); //
-router.post("/reset-password", authController.resetPassword); //
-// Validator
 router.post("/register", authValidator.register, authController.register);
+router.post("/verify-email", authController.verifyEmail);
+
 router.post("/login", authValidator.login, authController.login);
-// checkAuth
+
+router.post("/forgot-password", authController.forgotPassword);
+router.post("/verify-reset-password", authController.verifyResetPassword);
+router.post("/reset-password", authController.resetPassword);
+
+router.post("/refresh-token", authController.refreshToken);
+
+router.post("/logout", checkAuth, authController.logout);
+
 router.get("/me", checkAuth, authController.me);
 
 module.exports = router;

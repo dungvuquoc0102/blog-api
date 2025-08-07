@@ -18,7 +18,6 @@ class MessagesService {
 
   async getById(id) {
     const message = await Message.findOne({ where: { id } });
-    console.log(message);
     return message;
   }
 

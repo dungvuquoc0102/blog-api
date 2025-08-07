@@ -3,151 +3,114 @@ const { hash, compare } = require("@/utils/bcrypt");
 const refreshTokenService = require("./refreshToken.service");
 const jwtService = require("./jwt.service");
 const queueService = require("./queue.service");
+const generateAuthToken = require("@/utils/generateAuthToken");
+const createUsername = require("@/utils/createUsername");
 
-/**
- * Register new user
- * @param {string} email - User email
- * @param {string} password - User password
- * @returns {Object} Token data
- */
 const register = async (email, password, firstName, lastName) => {
-  try {
-    const hashedPassword = await hash(password);
+  const username = await createUsername(firstName, lastName);
+  const hashedPassword = await hash(password);
 
-    const user = await User.create({
-      email,
-      password: hashedPassword,
-      firstName,
-      lastName,
-    });
+  const newUser = await User.create({
+    email,
+    password: hashedPassword,
+    firstName,
+    lastName,
+    username,
+  });
 
-    queueService.dispatchQueue("sendVerifyEmail", { userId: user.id });
-
-    return;
-  } catch (error) {
-    console.error("Lỗi trong authService.register:", error);
-    throw new Error("Đăng ký thất bại. Vui lòng thử lại sau.");
-  }
+  queueService.dispatch("sendVerifyEmail", { userId: newUser.id });
 };
 
-const verifyToken = async (token) => {
-  try {
-    const payload = jwtService.verifyVerificationToken(token);
+const verifyEmail = async (tokenString) => {
+  const payload = jwtService.verifyVerifyEmailToken(tokenString);
 
-    if (typeof payload?.userId !== "number") return null;
-
-    const user = await User.findByPk(payload.userId);
-
-    if (!user || user.verifiedAt) return null;
-
-    await user.update({ verifiedAt: new Date() });
-
-    const accessTokenData = jwtService.generateAccessToken(user.id);
-    const refreshToken = await refreshTokenService.createRefreshToken(user.id);
-
-    return {
-      ...accessTokenData,
-      refreshToken: refreshToken.token,
-    };
-  } catch (err) {
-    console.error("Lỗi verifyToken trong authService:", err);
-    return null;
+  if (!payload) {
+    throw new Error("UNAUTHORIZED");
   }
+  const user = await User.findByPk(payload.userId);
+
+  if (user.verifiedAt) {
+    throw new Error("CONFLICT");
+  }
+  await user.update({ verifiedAt: new Date() });
+
+  const tokenData = await generateAuthToken(user.id);
+
+  return tokenData;
+};
+
+const login = async (email, password, rememberMe) => {
+  const user = await User.findOne({ where: { email } });
+  if (!user || !user.verifiedAt) {
+    throw new Error("NOTVERIFIED");
+  }
+  const isValid = await compare(password, user.password);
+  if (!isValid) {
+    throw new Error("UNAUTHORIZED");
+  }
+
+  const tokenData = await generateAuthToken(user.id);
+
+  if (!rememberMe) {
+    delete tokenData.refreshToken;
+  }
+  return tokenData;
 };
 
 const forgotPassword = async (email) => {
-  const user = await User.findOne({ where: { email } });
-  if (!user) throw new Error("Email không hợp lệ");
+  const user = await User.findOne({
+    where: {
+      email,
+    },
+  });
 
-  await dispatchQueue("sendForgotPasswordEmail", { userId: user.id });
-
-  return true;
+  queueService.dispatch("sendResetPasswordEmail", { userId: user.id });
 };
 
-const resetPassword = async (token, newPassword) => {
-  const tokenData = await verifyToken(token);
-  if (!tokenData?.userId) throw new Error("Token không hợp lệ hoặc đã hết hạn");
+const verifyResetPassword = async (tokenString) => {
+  const payload = jwtService.verifyResetPasswordToken(tokenString);
+  if (!payload) {
+    throw new Error("UNAUTHORIZED");
+  }
+};
 
-  const user = await User.findByPk(tokenData.userId);
+const resetPassword = async (tokenString, newPassword) => {
+  const payload = await jwtService.verifyResetPasswordToken(tokenString);
+  if (!payload) {
+    throw new Error("Token không hợp lệ hoặc đã hết hạn");
+  }
+
+  const user = await User.findByPk(payload.userId);
   if (!user) throw new Error("Người dùng không tồn tại");
 
   const hashedPassword = await hash(newPassword);
   user.password = hashedPassword;
-
   await user.save();
-
-  return true;
 };
 
-/**
- * Login user
- * @param {string} email - User email
- * @param {string} password - User password
- * @returns {Object} Token data with refresh token
- * @throws {Error} If credentials are invalid
- */
-const login = async (email, password) => {
-  const user = await User.findOne({ where: { email } });
-  if (!user) {
-    throw new Error("Thông tin đăng nhập không hợp lệ.");
-  }
-
-  const isValid = await compare(password, user.password);
-  if (!isValid) {
-    throw new Error("Thông tin đăng nhập không hợp lệ.");
-  }
-
-  const tokenData = jwtService.generateAccessToken(user.id);
-  const refreshToken = await refreshTokenService.createRefreshToken(user.id);
-
-  return {
-    ...tokenData,
-    refreshToken: refreshToken.token,
-  };
-};
-
-/**
- * Refresh access token
- * @param {string} refreshTokenString - Refresh token
- * @returns {Object} New token data with new refresh token
- * @throws {Error} If refresh token is invalid
- */
-const refreshAccessToken = async (refreshTokenString) => {
-  const refreshToken = await refreshTokenService.findValidRefreshToken(
-    refreshTokenString
-  );
+const refreshAccessToken = async (tokenString) => {
+  const refreshToken = await refreshTokenService.findValid(tokenString);
   if (!refreshToken) {
-    throw new Error("Refresh token không hợp lệ");
+    throw new Error("UNAUTHORIZED");
   }
 
-  const tokenData = jwtService.generateAccessToken(refreshToken.user_id);
-  await refreshTokenService.deleteRefreshToken(refreshToken);
+  await refreshTokenService.del(refreshToken.token);
 
-  const newRefreshToken = await refreshTokenService.createRefreshToken(
-    refreshToken.user_id
-  );
+  const newTokenData = await generateAuthToken(refreshToken.userId);
 
-  return {
-    ...tokenData,
-    refresh_token: newRefreshToken.token,
-  };
+  return newTokenData;
 };
 
-const revokeToken = async (refreshToken) => {
-  const deleted = await RefreshToken.destroy({
-    where: { token: refreshToken },
-  });
-
-  if (!deleted) {
-    throw new Error("Refresh token không tồn tại hoặc đã bị xoá");
-  }
-
-  return true;
+const revokeToken = async (tokenString) => {
+  await refreshTokenService.del(tokenString);
 };
 
 module.exports = {
   register,
-  verifyToken,
+  verifyEmail,
+  forgotPassword,
+  verifyResetPassword,
+  resetPassword,
   login,
   refreshAccessToken,
   revokeToken,

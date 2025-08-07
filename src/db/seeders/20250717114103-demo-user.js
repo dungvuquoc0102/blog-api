@@ -5,7 +5,7 @@ const { fakeUser } = require("@/utils/fakeData");
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    const users = fakeUser(50);
+    const users = fakeUser(); // 10 rows
     await queryInterface.bulkInsert("users", users, {});
   },
 

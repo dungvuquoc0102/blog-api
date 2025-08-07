@@ -4,10 +4,10 @@ const loadEmail = require("./loadEmail");
 const sendEmail = require("./sendEmail");
 
 const generateHTML = async (userId, firstName) => {
-  const tokenData = jwtService.generateVerifyEmailToken(userId);
-  const verifyUrl = `${process.env.FRONTEND_URL}/verify-email/confirm?token=${tokenData.verifyEmailToken}`;
-  return await loadEmail("verifyEmail", {
-    verifyUrl,
+  const tokenData = jwtService.generateResetPasswordToken(userId);
+  const resetUrl = `${process.env.FRONTEND_URL}/reset-password/?token=${tokenData.resetPasswordToken}`;
+  return await loadEmail("resetPasswordEmail", {
+    resetUrl,
     expiresIn: tokenData.expiresIn,
     firstName,
   });
@@ -17,21 +17,22 @@ module.exports = async (payload) => {
   try {
     const userId = JSON.parse(payload)?.userId;
     if (!userId) {
-      throw new Error("Lỗi khi gửi email xác thực");
+      throw new Error("Lỗi khi gửi email reset mật khẩu");
     }
 
     const user = await User.findByPk(userId);
     if (!user) {
-      throw new Error("Lỗi khi gửi email xác thực");
+      throw new Error("Lỗi khi gửi email reset mật khẩu");
     }
 
     const html = await generateHTML(user.id, user.firstName);
     await sendEmail({
       to: user.email,
-      subject: "Xác thực địa chỉ email của bạn",
+      subject: "Reset mật khẩu của bạn",
       html,
     });
   } catch (err) {
-    throw new Error("Lỗi khi gửi email xác thực");
+    console.error("Lỗi trong sendResetPasswordEmail:", err.message);
+    throw new Error("Lỗi khi gửi email reset mật khẩu");
   }
 };
