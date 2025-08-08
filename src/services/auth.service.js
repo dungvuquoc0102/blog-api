@@ -1,4 +1,4 @@
-const { User, RefreshToken } = require("@/models");
+const { User } = require("@/models");
 const { hash, compare } = require("@/utils/bcrypt");
 const refreshTokenService = require("./refreshToken.service");
 const jwtService = require("./jwt.service");

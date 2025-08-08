@@ -15,7 +15,7 @@ const pusher = require("@/utils/socket");
 const app = express();
 
 // Middleware
-app.use(cors({ origin: "http://localhost:5173", credentials: true }));
+app.use(cors({ origin: process.env.FRONTEND_URL, credentials: true }));
 app.use(express.static("public"));
 app.use(express.json());
 app.use(express.urlencoded());

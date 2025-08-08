@@ -45,7 +45,7 @@ module.exports = {
         type: Sequelize.STRING(255),
         defaultValue: null,
       },
-      backgroundImage: {
+      background_image: {
         type: Sequelize.STRING(255),
         defaultValue: null,
       },
@@ -93,7 +93,7 @@ module.exports = {
         type: Sequelize.STRING(50),
         defaultValue: "local",
       },
-      providerId: {
+      provider_id: {
         type: Sequelize.STRING(255),
         defaultValue: null,
       },

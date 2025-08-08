@@ -36,7 +36,6 @@ const googleLogin = async (credential) => {
 };
 
 const githubCallback = async (code) => {
-  console.log("start>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", githubTokenData);
   const githubTokenData = await axios.post(
     "https://github.com/login/oauth/access_token",
     {
@@ -48,16 +47,11 @@ const githubCallback = async (code) => {
     { headers: { Accept: "application/json" } }
   );
 
-  console.log(
-    "githubTokenData>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",
-    githubTokenData
-  );
   const accessToken = githubTokenData.data.access_token;
 
   const { data: githubUser } = await axios.get("https://api.github.com/user", {
     headers: { Authorization: `token ${accessToken}` },
   });
-  console.log("githubUser>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", githubUser);
 
   const { data: emails } = await axios.get(
     "https://api.github.com/user/emails",
@@ -68,8 +62,6 @@ const githubCallback = async (code) => {
       },
     }
   );
-
-  console.log("emails>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", emails);
 
   let user = await User.findOne({
     where: {
@@ -91,7 +83,6 @@ const githubCallback = async (code) => {
 
   const tokenData = await generateAuthToken(user.id);
 
-  console.log(tokenData);
   return `
     <script>
       window.opener.postMessage(
