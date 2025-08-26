@@ -6,7 +6,11 @@ const handleValidation = (req, res, next) => {
     return next();
   }
 
-  res.error(400, "Lỗi validate", { errors: result.array() });
+  const errors = result.array();
+
+  const message = Array.isArray(errors) && errors[0]?.msg;
+
+  res.error(400, message, errors);
 };
 
 module.exports = handleValidation;

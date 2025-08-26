@@ -2,7 +2,7 @@ name: Deploy to VPS on push
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
   deploy:
@@ -16,11 +16,11 @@ jobs:
       - name: Add host to known_hosts
         run: |
           mkdir -p ~/.ssh
-          ssh-keyscan -p "${{ secrets.SSH_PORT || 22 }}" "${{ secrets.SSH_HOST }}" >> ~/.ssh/known_hosts
+          ssh-keyscan -p "${{ secrets.SSH_PORT }}" "${{ secrets.SSH_HOST }}" >> ~/.ssh/known_hosts
 
       - name: Trigger deploy script on VPS
         env:
           SSH_USER: ${{ secrets.SSH_USER }}
           SSH_HOST: ${{ secrets.SSH_HOST }}
         run: |
-          ssh -p "${{ secrets.SSH_PORT || 22 }}" "${SSH_USER}@${SSH_HOST}" 'bash /home/blog/deploy/blog-api/deploy.sh'
+          ssh -p "${{ secrets.SSH_PORT }}" "${SSH_USER}@${SSH_HOST}" 'bash /home/blog/deploy/blog-api/deploy.sh'
